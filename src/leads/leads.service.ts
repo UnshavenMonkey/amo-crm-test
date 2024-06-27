@@ -35,14 +35,18 @@ export class LeadsService {
 
     constructor(private readonly httpService: HttpService) {}
 
-    getLeads(): Observable<any> {
-        return this.httpService.get(`${this.apiUrl}leads?with=contacts`, {
+    getLeads(query?: string | number): Observable<any> {
+        const url = query ? `${this.apiUrl}leads?with=contacts&query=${query}` : `${this.apiUrl}leads?with=contacts`;
+
+        return this.httpService.get(url, {
             headers: {
                 Authorization: `Bearer ${this.accessToken}`,
             },
         }).pipe(
             mergeMap(response => {
+                if (!response.data._embedded) return of([]);
                 const leads = response.data._embedded.leads;
+
                 const leadWithDetails = leads.map((lead: Lead) =>
                     forkJoin({
                         user: this.httpService.get(`${this.apiUrl}users/${lead.responsible_user_id}`, {
