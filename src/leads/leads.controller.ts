@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { LeadsService } from './leads.service';
-import { Observable } from 'rxjs';
+import {Observable, tap} from 'rxjs';
 import { AxiosResponse } from 'axios';
 
 @Controller('leads')
